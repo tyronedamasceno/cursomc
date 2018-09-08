@@ -60,7 +60,7 @@ public class Pedido implements Serializable {
 	public Double getValorTotal() {
 		Double total = 0.0;
 		for (ItemPedido ip : itens) {
-			total += ip.getSubtotal();
+			total += ip.getSubTotal();
 		}
 		return total;
 	}
