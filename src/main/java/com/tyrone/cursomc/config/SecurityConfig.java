@@ -20,25 +20,24 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-	@Autowired
-	private Environment env;
+ 	@Autowired
+    private Environment env;
 	
 	private static final String[] PUBLIC_MATCHERS = {
 			"/h2-console/**"
 	};
-	
-	private static final String[] PUBLIC_MATCHERS_GET = {
+ 	private static final String[] PUBLIC_MATCHERS_GET = {
 			"/produtos/**",
-			"/categorias/**"
+			"/categorias/**",
+			"/clientes/**"
 	};
-	
-	@Override
+ 	
+ 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
 		if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
-			http.headers().frameOptions().disable();
-		}
+            http.headers().frameOptions().disable();
+        }
 		
 		http.cors().and().csrf().disable();
 		http.authorizeRequests()
@@ -59,5 +58,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
 }
