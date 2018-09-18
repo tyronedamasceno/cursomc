@@ -13,43 +13,44 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import com.tyrone.cursomc.domain.Cliente;
 import com.tyrone.cursomc.domain.Pedido;
 
 public abstract class AbstractEmailService implements EmailService {
-	
+
 	@Value("${default.sender}")
 	private String sender;
-	
+
 	@Autowired
 	private TemplateEngine engine;
-	
+
 	@Autowired
 	private JavaMailSender javaMailSender;
-	
+
 	@Override
 	public void sendOrderConfirmation(Pedido pedido) {
-		SimpleMailMessage smm =  prepareSimpleMailMessageFromPedido(pedido);
+		SimpleMailMessage smm = prepareSimpleMailMessageFromPedido(pedido);
 		sendMail(smm);
 	}
 
 	protected SimpleMailMessage prepareSimpleMailMessageFromPedido(Pedido pedido) {
 		SimpleMailMessage smm = new SimpleMailMessage();
-		
+
 		smm.setTo(pedido.getCliente().getEmail());
 		smm.setFrom(sender);
 		smm.setSubject("Pedido confirmado! Código: " + pedido.getId());
 		smm.setSentDate(new Date(System.currentTimeMillis()));
 		smm.setText(pedido.toString());
-		
+
 		return smm;
 	}
-	
+
 	protected String htmlFromTemplatePedido(Pedido obj) {
 		Context context = new Context();
 		context.setVariable("pedido", obj);
 		return engine.process("email/confirmacaoPedido", context);
 	}
-	
+
 	@Override
 	public void sendOrderConfirmationHtmlEmail(Pedido obj) {
 		MimeMessage mm;
@@ -71,5 +72,23 @@ public abstract class AbstractEmailService implements EmailService {
 		mmh.setText(htmlFromTemplatePedido(obj), true);
 		return mimeMessage;
 	}
-	
+
+	@Override
+	public void sendNewPasswordEmail(Cliente cliente, String newPass) {
+		SimpleMailMessage smm = prepareNewPasswordEmail(cliente, newPass);
+		sendMail(smm);
+	}
+
+	protected SimpleMailMessage prepareNewPasswordEmail(Cliente cliente, String newPass) {
+		SimpleMailMessage smm = new SimpleMailMessage();
+
+		smm.setTo(cliente.getEmail());
+		smm.setFrom(sender);
+		smm.setSubject("Solicitação de nova senha");
+		smm.setSentDate(new Date(System.currentTimeMillis()));
+		smm.setText("Nova senha: " + newPass);
+
+		return smm;
+	}
+
 }
