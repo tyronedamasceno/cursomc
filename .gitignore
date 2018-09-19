@@ -26,3 +26,5 @@
 
 # Properties Files
 *.properties
+application.properties
+
